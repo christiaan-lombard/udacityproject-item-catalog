@@ -74,10 +74,10 @@ class User(Model):
     email = Column(String(256), nullable = False)
     password_hash = Column(String(256), nullable = False)
 
-    def setPassword(self, password):
+    def set_password(self, password):
         self.password_hash = pwd_context.encrypt(password)
 
-    def verifyPassword(self, password):
+    def verify_password(self, password):
         return pwd_context.verify(password, self.password_hash)
 
     @property
