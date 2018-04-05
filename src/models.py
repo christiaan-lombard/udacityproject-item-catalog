@@ -4,6 +4,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, relationship
 from passlib.apps import custom_app_context as pwd_context
 
+from exceptions import ModelNotFoundError
+
 Base = declarative_base()
 
 
@@ -28,8 +30,7 @@ class Model(Base):
         if cls._session is not None:
             return cls._session
         else:
-            raise RuntimeError('Cant get session.'
-                                 'Call Model.use_session() to set a session reference')
+            raise RuntimeError('Session not set. Call Model.use_session() to set a shared session reference.')
 
     @classmethod
     def make(cls, **kwargs):
@@ -42,6 +43,13 @@ class Model(Base):
     @classmethod
     def find(cls, key):
         return cls.query().get(key)
+
+    @classmethod
+    def find_or_fail(cls, key):
+        model = cls.find(key)
+        if model is None:
+            raise ModelNotFoundError("{} with primary key {} does not exist.".format(cls.__name__, key))
+        return model
 
     def fill(self, **kwargs):
         for name in kwargs.keys():
@@ -81,6 +89,7 @@ class User(Model):
             'id' : self.id,
 	    }
 
+
 class Category(Model):
 
     __tablename__ = 'category'
@@ -100,6 +109,7 @@ class Category(Model):
             'price' : self.price,
             'description' : self.description
         }
+
 
 class Item(Model):
 

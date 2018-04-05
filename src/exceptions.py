@@ -1,0 +1,4 @@
+
+
+class ModelNotFoundError(RuntimeError):
+    pass
