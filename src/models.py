@@ -1,13 +1,15 @@
-from sqlalchemy import Column, Integer, String, Text, ForeignKey
+from sqlalchemy import Column, Integer, String, Text, ForeignKey, DateTime, func, desc
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, relationship
 from passlib.apps import custom_app_context as pwd_context
-
-from exceptions import ModelNotFoundError
+import datetime
 
 Base = declarative_base()
 
+
+class ModelNotFoundError(RuntimeError):
+    pass
 
 class Model(Base):
     """ Base database model class with active record features.
@@ -17,6 +19,7 @@ class Model(Base):
     """
 
     __abstract__ = True
+    _session = None
 
     def __init__(self):
         self.session = self.get_session()
@@ -35,6 +38,10 @@ class Model(Base):
     @classmethod
     def make(cls, **kwargs):
         return cls().fill(**kwargs)
+
+    @classmethod
+    def create(cls, **kwargs):
+        return cls().fill(**kwargs).save()
 
     @classmethod
     def query(cls):
@@ -71,7 +78,7 @@ class User(Model):
 
     id = Column(Integer, primary_key = True)
     name = Column(String(128), nullable = False)
-    email = Column(String(256), nullable = False)
+    email = Column(String(256), nullable = False, unique = True)
     password_hash = Column(String(256), nullable = False)
 
     def set_password(self, password):
@@ -127,6 +134,17 @@ class Item(Model):
     category_slug = Column(String(20), ForeignKey('category.slug'))
     category = relationship("Category", back_populates="items")
 
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, onupdate=func.now())
+
+    @classmethod
+    def latest(cls, limit):
+        return cls.query() \
+                  .order_by(desc(Item.created_at)) \
+                  .limit(limit) \
+                  .all()
+
+
     @property
     def serialize(self):
         """Return Item data in serializeable format"""
@@ -141,7 +159,7 @@ class Item(Model):
 def init_db():
 
     # create the database tables as defined
-    engine = create_engine('sqlite:///catalog.db')
+    engine = create_engine('sqlite:///catalog.db', echo=True)
     Base.metadata.create_all(engine)
 
     # create a session
