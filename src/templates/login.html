@@ -2,4 +2,70 @@
 {% block title %}Login{% endblock %}
 {% block body %}
 
+<h1>Login</h1>
+
+<p id="oauth_result"></p>
+
+<!-- GOOGLE PLUS SIGN IN-->
+
+<div id="signinButton">
+    <span class="g-signin"
+        data-scope="openid email"
+        data-clientid="{{ google_client_id }}"
+        data-redirecturi="postmessage"
+        data-accesstype="offline"
+        data-cookiepolicy="single_host_origin"
+        data-callback="googleOauthCallback"
+        data-approvalprompt="force">
+    </span>
+</div>
+
+
+<!--END GOOGLE PLUS SIGN IN-->
+
+{% endblock %}
+
+{% block scripts %}
+
+<script>
+    function googleOauthCallback(authResult){
+
+        console.info('OAuth authorization result: %o', authResult);
+
+        if(authResult['code']) {
+            $('#signinButton').attr('style', 'display:none');
+
+            var fd = new FormData();
+            fd.append('code', authResult['code']);
+            fd.append('_csfr_token_', "{{ token }}");
+
+            $.ajax({
+                type: 'POST',
+                url: "{{ url_for('oauthGoogleCallback') }}",
+                processData: false,
+                contentType: false,
+                dataType: 'json',
+                data: fd,
+                success: function(result) {
+                    console.info('OAuth login result: %o', result);
+                    if (result) {
+                        $('#oauth_result').html('Login Successful! Redirecting...');
+                        setTimeout(function() {
+                            window.location.href = "{{ return_to }}";
+                       }, 4000);
+                    }
+                },
+            });
+        }else if (authResult['error']){
+            console.error('There was an error: ' + authResult['error']);
+            $('#oauth_result').html('Oops! Something went wrong... ' + authResult['error']);
+        } else {
+            console.error('Auth request did not contain an expected result: %o', authResult);
+            $('#oauth_result').html('Oops! Something went wrong... Not sure what happened there.');
+        }
+    }
+</script>
+
+<script src="//apis.google.com/js/platform.js?onload=start"> </script>
+
 {% endblock %}

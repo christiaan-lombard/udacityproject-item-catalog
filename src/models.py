@@ -79,7 +79,14 @@ class User(Model):
     id = Column(Integer, primary_key = True)
     name = Column(String(128), nullable = False)
     email = Column(String(256), nullable = False, unique = True)
+    picture = Column(String)
     password_hash = Column(String(256), nullable = False)
+
+    @classmethod
+    def find_by_email(cls, email):
+        return cls.query() \
+                  .filter(User.email == email) \
+                  .first()
 
     def set_password(self, password):
         self.password_hash = pwd_context.encrypt(password)

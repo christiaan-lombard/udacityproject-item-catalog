@@ -3,3 +3,4 @@
 __pycache__
 
 catalog.db
+google_client_secrets.json
