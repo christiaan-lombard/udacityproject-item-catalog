@@ -1,0 +1,73 @@
+/* 
+font-family: 'Gamja Flower', cursive;
+font-family: 'Gaegu', cursive; 
+*/
+
+
+html, body {
+    font-family: 'Gamja Flower', cursive;
+    padding: 0;
+    margin: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Gaegu', cursive;
+    font-weight: bold;
+}
+
+img {
+    max-width: 100%;
+}
+
+.header {
+    display: flex;
+    background-color: #FF5722;
+    color: white;
+    align-items: center;
+}
+
+.header h1 {
+    flex: 1 1 auto;
+    margin: 12px 24px 12px 24px;
+}
+
+.header .userinfo {
+    margin-right: 24px;
+}
+
+.header .userinfo span {
+}
+
+.header .userinfo img {
+    float: right;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    margin-left: 6px;
+}
+
+.main {
+    display: flex;
+    margin: 0 auto;
+    max-width: 1024px;
+}
+
+.main .sidebar {
+    flex: 0 0 200px;
+}
+
+.section-items {
+
+}
+
+.section-items .item-list {
+    display: flex;
+    flex-flow: row wrap;
+}
+
+.section-items .item-list .item {
+    max-width: 200px;
+    padding: 12px;
+    margin: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+}

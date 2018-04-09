@@ -70,6 +70,7 @@ class Model(Base):
     def save(self):
         self.session.add(self)
         self.session.commit()
+        return self
 
 
 class User(Model):
@@ -124,6 +125,12 @@ class Category(Model):
             'description' : self.description
         }
 
+    @classmethod
+    def all(cls):
+        return cls.query() \
+                  .order_by(Category.title) \
+                  .all()
+
 
 class Item(Model):
 
@@ -133,7 +140,6 @@ class Item(Model):
     name = Column(String(128), nullable = False)
     picture = Column(String(256))
     description = Column(Text())
-    price = Column(String(64))
 
     user_id = Column(Integer, ForeignKey('user.id'))
     user = relationship(User)

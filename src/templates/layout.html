@@ -5,23 +5,49 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>{% block title %}{% endblock %} | Cat-alog</title>
+    <link href="https://fonts.googleapis.com/css?family=Gaegu:300,400,700|Gamja+Flower" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 
 </head>
 <body>
 
-    <header>
+    <header class="header">
         <h1>Cat-alog</h1>
+
+        {% if user != None %}
+        <section class="userinfo">
+            <span>Logged in as <em>{{ user.name }}</em></span>
+            <img src="{{ user.picture }}">
+        </section>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('showLogin') }}">Logout</a></li>
+            </ul>
+        </nav>
+        {% else %}
         <nav>
             <ul>
                 <li><a href="{{ url_for('showLogin') }}">Login</a></li>
             </ul>
         </nav>
+        {% endif %}
+
     </header>
 
-    <main>
+    <main class="main">
         {% block body %}{% endblock %}
+        <aside class="sidebar">
+            <nav>
+                <h4>Cat-egories</h4>
+                {% for cat in categories %}
+                <div>
+                    <li>{{ cat.title }}</li>
+                </div>
+                {% endfor %}
+            </nav>
+        </aside>
     </main>
+
 
     <footer></footer>
 

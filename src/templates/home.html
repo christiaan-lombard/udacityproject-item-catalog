@@ -2,4 +2,12 @@
 {% block title %}Home{% endblock %}
 {% block body %}
 <h1>Home</h1>
+<section>
+    <h4>Latest Items</h4>
+    {% for item in latest_items %}
+    <div>
+        <li>{{ item.name }}</li>
+    </div>
+    {% endfor %}
+</section>
 {% endblock %}
