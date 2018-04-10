@@ -1,0 +1,67 @@
+{% extends "layout.html" %}
+{% block title %}
+    {% if action == 'create' %}
+    Add Item
+    {% else %}
+    Edit Item
+    {% endif %}
+{% endblock %}
+{% block body %}
+<section class="section-form">
+
+    {% if action == 'create' %}
+    <form class="form item-form card" method="POST" action="{{ url_for('create_item') }}" enctype="multipart/form-data">
+        <h2>Add Item</h2>
+    {% else %}
+    <form class="form item-form card" method="POST" action="{{ url_for('update_item') }}" enctype="multipart/form-data">
+        <h2>Edit Item</h2>
+    {% endif %}
+
+        <input type="hidden" name="_csfr_token_" value="{{ token }}">
+
+        <div class="form-control">
+            <label for="item_name">Item Name</label>
+            <input type="text" id="item_name" name="name" required {% if item.description %}value="{{ item.name }}"{% endif %}>
+        </div>
+
+        <div class="form-control">
+            <label for="item_desc">Description</label>
+            <input type="text" id="item_desc" name="description" {% if item.description %}value="{{ item.description }}"{% endif %}>
+        </div>
+
+        <div class="form-control">
+            <label for="item_picture_link">Picture Link</label>
+            <input type="text" id="item_picture_link" name="picture_link" placeholder="http://..." value="{{ picture_link }}">
+        </div>
+
+        <div class="form-control">
+            <label for="item_picture_file">Picture File</label>
+            <input type="file" id="item_picture_file" name="picture_file">
+        </div>
+
+        <h3>Category</h3>
+        {% for cat in categories %}
+        <div class="form-radio">
+            <input type="radio" name="category_slug"
+            value="{{ cat.slug }}" id="cat_radio_{{ cat.slug }}"
+            {% if cat.slug == item.category_slug %}checked{% endif %}>
+            <label for="cat_radio_{{ cat.slug }}">{{ cat.title }}</label>
+        </div>
+        {% endfor %}
+        <div class="form-radio">
+            <input type="radio" name="category_slug"
+            value="_new_" id="cat_radio_new">
+            <input type="text" name="new_category_title" placeholder="New Category">
+        </div>
+    
+        {% if item.picture %}
+        <img src="{{ item.picture }}" alt="">
+        {% endif %}
+    
+        <div class="form-actions">
+            <button type="submit" class="button">Save</button>
+        </div>
+
+    </form>
+</section>
+{% endblock %}

@@ -5,47 +5,61 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>{% block title %}{% endblock %} | Cat-alog</title>
-    <link href="https://fonts.googleapis.com/css?family=Gaegu:300,400,700|Gamja+Flower" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Gamja+Flower|Lato:400,700" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 
 </head>
 <body>
 
     <header class="header">
-        <h1>Cat-alog</h1>
+        <a class="app-title" href="{{ url_for('show_home') }}">Cat-alog</a>
 
         {% if user != None %}
         <section class="userinfo">
             <span>Logged in as <em>{{ user.name }}</em></span>
             <img src="{{ user.picture }}">
         </section>
-        <nav>
-            <ul>
-                <li><a href="{{ url_for('showLogin') }}">Logout</a></li>
-            </ul>
-        </nav>
-        {% else %}
-        <nav>
-            <ul>
-                <li><a href="{{ url_for('showLogin') }}">Login</a></li>
-            </ul>
-        </nav>
         {% endif %}
+        <nav>
+            <ul>
+                {% if user != None %}
+                <li>
+                    <form action="{{ url_for('logout') }}" method="POST">
+                        <button type="submit">Logout</button>
+                    </form>
+                </li>
+                {% else %}
+                <li><a href="{{ url_for('show_login') }}">Login</a></li>
+                {% endif %}
+            </ul>
+        </nav>
 
     </header>
 
     <main class="main">
-        {% block body %}{% endblock %}
+        {% if g.show_sidebar %}
         <aside class="sidebar">
-            <nav>
-                <h4>Cat-egories</h4>
+            <h3>Cat-egories</h3>
+            <ul class="nav-list">
                 {% for cat in categories %}
-                <div>
-                    <li>{{ cat.title }}</li>
-                </div>
+                <li class="nav-item"><a href="">{{ cat.title }}</a></li>
                 {% endfor %}
-            </nav>
+            </ul>
+
+            {% if user %}
+            <h3>My Items</h3>
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a href="{{ url_for('show_my_items') }}">View Items</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ url_for('create_item') }}">Add Item</a>
+                </li>
+            </ul>
+            {% endif %}
         </aside>
+        {% endif %}
+        {% block body %}{% endblock %}
     </main>
 
 

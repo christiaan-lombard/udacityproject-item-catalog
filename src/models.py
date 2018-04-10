@@ -157,6 +157,13 @@ class Item(Model):
                   .limit(limit) \
                   .all()
 
+    @classmethod
+    def for_user(cls, user_id):
+        return cls.query() \
+                  .order_by(desc(Item.created_at)) \
+                  .filter(Item.user_id == user_id) \
+                  .all()
+
 
     @property
     def serialize(self):

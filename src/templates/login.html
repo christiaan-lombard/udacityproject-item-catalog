@@ -1,27 +1,31 @@
 {% extends "layout.html" %}
 {% block title %}Login{% endblock %}
 {% block body %}
+<section class="section-form">
+    <div class="form login-form card">
+        <h1>Login</h1>
 
-<h1>Login</h1>
+        <p id="oauth_result"></p>
 
-<p id="oauth_result"></p>
+        <!-- GOOGLE PLUS SIGN IN-->
 
-<!-- GOOGLE PLUS SIGN IN-->
+        <div id="signinButton">
+            <span class="g-signin"
+                data-scope="openid email"
+                data-clientid="{{ google_client_id }}"
+                data-redirecturi="postmessage"
+                data-accesstype="offline"
+                data-cookiepolicy="single_host_origin"
+                data-callback="googleOauthCallback"
+                data-approvalprompt="force">
+            </span>
+        </div>
 
-<div id="signinButton">
-    <span class="g-signin"
-        data-scope="openid email"
-        data-clientid="{{ google_client_id }}"
-        data-redirecturi="postmessage"
-        data-accesstype="offline"
-        data-cookiepolicy="single_host_origin"
-        data-callback="googleOauthCallback"
-        data-approvalprompt="force">
-    </span>
-</div>
+        <!--END GOOGLE PLUS SIGN IN-->
+    </div>
+</section>
 
 
-<!--END GOOGLE PLUS SIGN IN-->
 
 {% endblock %}
 
@@ -41,7 +45,7 @@
 
             $.ajax({
                 type: 'POST',
-                url: "{{ url_for('oauthGoogleCallback') }}",
+                url: "{{ url_for('oauth_google_callback') }}",
                 processData: false,
                 contentType: false,
                 dataType: 'json',

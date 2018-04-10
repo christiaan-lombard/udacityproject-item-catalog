@@ -6,6 +6,9 @@ import random, string, json, requests
 from oauth2client.client import flow_from_clientsecrets, FlowExchangeError
 
 
+class UnauthorizedError(RuntimeError):
+    pass
+
 class UnauthenticatedError(RuntimeError):
     pass
 
@@ -48,12 +51,16 @@ class Auth:
     def login(self, user):
         session['user_id'] = user.id
 
+    def logout(self):
+        del session['user_id']
+
     def requires_login(self, func):
         @wraps(func)
         def check_login(*args, **kwargs):
             user = self.user()
             if user is None:
                 raise UnauthenticatedError("Requires a logged in user.")
+            return func(*args, **kwargs)
         return check_login
 
     def user(self):

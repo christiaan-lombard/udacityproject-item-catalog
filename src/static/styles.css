@@ -1,17 +1,28 @@
 /* 
 font-family: 'Gamja Flower', cursive;
-font-family: 'Gaegu', cursive; 
+font-family: 'Lato', sans-serif;
 */
 
 
 html, body {
-    font-family: 'Gamja Flower', cursive;
+    font-family: 'Lato', sans-serif;
     padding: 0;
     margin: 0;
+    background-color: #FAFAFA;
+    min-height: 100vh;
+    position: relative;
+    color: rgba(0, 0, 0, 0.87);
+    font-size: 16px;
+}
+
+body {
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: stretch;
 }
 
 h1, h2, h3, h4, h5, h6 {
-    font-family: 'Gaegu', cursive;
+    font-family: 'Gamja Flower', cursive;
     font-weight: bold;
 }
 
@@ -19,23 +30,122 @@ img {
     max-width: 100%;
 }
 
-.header {
-    display: flex;
-    background-color: #FF5722;
-    color: white;
-    align-items: center;
+.button {
+    display: inline-block;
+    background-color: #607D8B;
+    font-family: 'Lato', sans-serif;
+    text-decoration: none;
+    padding: 12px 24px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+    border-radius: 2px;
+    font-weight: bold;
+    border: none;
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.87);
 }
 
-.header h1 {
-    flex: 1 1 auto;
-    margin: 12px 24px 12px 24px;
+.card {
+    background-color: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
 }
+
+.form-control {
+    display: flex;
+    flex-flow: column nowrap;
+    padding-bottom: 12px;
+}
+
+.form-control label{
+    margin-bottom: 4px;
+}
+
+.section-form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.form {
+    padding: 24px;
+}
+
+.form h2 {
+    margin-top: 0;
+}
+
+.form-control label {
+
+}
+
+.form-control input {
+    width: 100%;
+}
+
+.form-actions {
+    text-align: right;
+    margin-top: 12px;
+}
+
+
+.header {
+    display: flex;
+    flex-flow: row wrap;
+    background-color: #607D8B;
+    color: white;
+    align-items: center;
+    border-bottom: 1px solid #CFD8DC;
+}
+
+.header .app-title {
+    flex: 1 1 auto;
+    margin: 6px 24px 12px 24px;
+    font-size: 2em;
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.87);
+    font-family: 'Gamja Flower', cursive;
+    font-weight: bold;
+}
+
+.header nav {
+    height: 62px;
+}
+
+.header nav > ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.header nav > ul > li {
+
+}
+
+.header nav > ul > li a, .header nav > ul > li button{
+    display: block;
+    padding: 0 12px;
+    text-decoration: none;
+    color: white;
+    background: none;
+    border: none;
+    line-height: 62px;
+    cursor: pointer;
+}
+
+.header nav > ul > li a:hover, .header nav > ul > li button:hover{
+    background-color: #78909C;
+    border-bottom: 2px solid #ECEFF1;
+}
+
 
 .header .userinfo {
     margin-right: 24px;
+    display: flex;
+    align-items: center;
 }
 
 .header .userinfo span {
+
 }
 
 .header .userinfo img {
@@ -47,13 +157,22 @@ img {
 }
 
 .main {
+    flex: 1 1 auto;
     display: flex;
-    margin: 0 auto;
-    max-width: 1024px;
+    flex-flow: row nowrap;
 }
 
 .main .sidebar {
-    flex: 0 0 200px;
+    flex: 0 0 auto;
+    background-color: #ECEFF1;
+    margin-right: 12px;
+    border-right: 1px solid #CFD8DC;
+    padding-left: 12px;
+}
+
+.main .sidebar h3 {
+    padding-left: 12px;
+    padding-right: 24px;
 }
 
 .section-items {
@@ -63,11 +182,41 @@ img {
 .section-items .item-list {
     display: flex;
     flex-flow: row wrap;
+    align-items: flex-start;
 }
 
 .section-items .item-list .item {
-    max-width: 200px;
-    padding: 12px;
-    margin: 12px;
+    margin: 0 12px 12px 0;
     box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+}
+
+.section-items .item-list .item img {
+    display: block;
+    max-height: 200px;
+}
+
+.section-items .item-list .item h3 {
+    margin: 12px;
+}
+
+
+.nav-list {
+    list-style: none;
+    padding: 0;
+}
+
+.nav-list .nav-item {
+    margin: 0;
+    padding: 0;
+}
+
+.nav-list .nav-item a {
+    text-decoration: none;
+    color: rgba(0, 0, 0, 0.87);
+    padding: 12px;
+    display: block;
+}
+
+.nav-list .nav-item a:hover {
+    background-color: #CFD8DC;
 }

@@ -1,13 +1,15 @@
 {% extends "layout.html" %}
 {% block title %}Home{% endblock %}
 {% block body %}
-<h1>Home</h1>
-<section>
-    <h4>Latest Items</h4>
-    {% for item in latest_items %}
-    <div>
-        <li>{{ item.name }}</li>
+<section class="section-items">
+    <h2>Latest Items</h2>
+    <div class="item-list">
+        {% for item in latest_items %}
+        <article class="item">
+            <h3>{{ item.name }}</h3>
+            <img src="{{ item.picture }}" alt="">
+        </article>
+        {% endfor %}
     </div>
-    {% endfor %}
 </section>
 {% endblock %}
