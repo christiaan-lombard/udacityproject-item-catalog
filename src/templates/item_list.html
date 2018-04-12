@@ -6,8 +6,11 @@
     <div class="item-list">
         {% for item in items %}
         <article class="item">
-            <h3>{{ item.name }}</h3>
-            <img src="{{ item.picture }}" alt="">
+            <a href="{{ url_for('show_item', id=item.id) }}" class="item-title"><h3>{{ item.name }}</h3></a>
+            <small>By <a href="{{ url_for('show_user_items', id=item.user.id) }}">{{ item.user.name }}</a></small>
+            {% if item.has_picture() %}
+            <a href="{{ url_for('show_item', id=item.id) }}" class="item-picture"><img src="{{ item.get_picture_url() }}" alt=""></a>
+            {% endif %}
         </article>
         {% endfor %}
     </div>

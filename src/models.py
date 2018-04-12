@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, Text, ForeignKey, DateTime, func
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, relationship
+from flask import url_for
 from passlib.apps import custom_app_context as pwd_context
 import datetime
 
@@ -20,9 +21,6 @@ class Model(Base):
 
     __abstract__ = True
     _session = None
-
-    def __init__(self):
-        self.session = self.get_session()
 
     @classmethod
     def use_session(cls, session):
@@ -64,12 +62,14 @@ class Model(Base):
         return self
 
     def delete(self):
-        self.session.delete(self)
-        self.session.commit()
+        s = self.get_session()
+        s.delete(self)
+        s.commit()
 
     def save(self):
-        self.session.add(self)
-        self.session.commit()
+        s = self.get_session()
+        s.add(self)
+        s.commit()
         return self
 
 
@@ -111,7 +111,7 @@ class Category(Model):
 
     slug = Column(String(20), primary_key = True)
     title = Column(String(100), nullable = False)
-    description = Column(Text)
+    # description = Column(Text)
 
     items = relationship("Item", back_populates="category")
 
@@ -162,7 +162,31 @@ class Item(Model):
         return cls.query() \
                   .order_by(desc(Item.created_at)) \
                   .filter(Item.user_id == user_id) \
+                  .order_by(desc(Item.created_at)) \
                   .all()
+
+    def set_picture_upload(self, filename):
+        self.picture = 'UPLOAD:' + filename
+
+    def set_picture_link(self, link):
+        self.picture = 'LINK:' + link
+
+    def get_picture_info(self):
+        if not self.picture:
+            return ('NONE', '')
+        parts = self.picture.split(':')
+        t = parts.pop(0)
+        return (t, ":".join(parts))
+
+    def get_picture_url(self):
+        t, url = self.get_picture_info()
+        if t == 'UPLOAD':
+            return url_for('uploaded_file', filename=url)
+        else:
+            return url
+
+    def has_picture(self):
+        return bool(self.picture)
 
 
     @property

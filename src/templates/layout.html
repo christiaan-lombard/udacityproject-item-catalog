@@ -42,7 +42,7 @@
             <h3>Cat-egories</h3>
             <ul class="nav-list">
                 {% for cat in categories %}
-                <li class="nav-item"><a href="">{{ cat.title }}</a></li>
+                <li class="nav-item"><a href="{{ url_for('show_item_category', slug=cat.slug) }}">{{ cat.title }}</a></li>
                 {% endfor %}
             </ul>
 
@@ -50,10 +50,10 @@
             <h3>My Items</h3>
             <ul class="nav-list">
                 <li class="nav-item">
-                    <a href="{{ url_for('show_my_items') }}">View Items</a>
+                    <a href="{{ url_for('show_user_items', id=user.id) }}">View Items</a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{ url_for('create_item') }}">Add Item</a>
+                    <a href="{{ url_for('edit_item') }}">Add Item</a>
                 </li>
             </ul>
             {% endif %}
@@ -65,7 +65,22 @@
 
     <footer></footer>
 
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class="flash-message-list">
+                {% for message in messages %}
+                <li class="flash-message">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <script>
+        setTimeout(function(){
+            $('.flash-message-list').hide(500);
+        }, 4000);
+    </script>
     {% block scripts %}{% endblock %}
 
 </body>

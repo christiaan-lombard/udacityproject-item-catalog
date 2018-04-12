@@ -2,4 +2,26 @@
 {% block title %}{{ item.name }}{% endblock %}
 {% block body %}
 
+<article class="article-item">
+    {% if item.has_picture() %}
+    <img src="{{ item.get_picture_url() }}" alt="">
+    {% endif %}
+    <h2>{{ item.name }} </h2>
+
+    <p>{{ item.description }}</p>
+
+    <p><small>Category: {{ item.category.title }}</small></p>
+
+    {% if user and user.id == item.user_id %}
+    <a href="{{ url_for('edit_item', id=item.id) }}" class="button">Edit</a>
+    <form action="{{ url_for('delete_item', id=item.id) }}" class="form-delete" method="POST">
+        <input type="hidden" name="_csfr_token_" value="{{ token }}">
+        <button type="submit" class="button" onclick="return confirm('Are you sure?')">Delete</button>
+    </form>
+    {% endif %}
+
+</article>
+
+
+
 {% endblock %}

@@ -30,62 +30,11 @@ img {
     max-width: 100%;
 }
 
-.button {
-    display: inline-block;
-    background-color: #607D8B;
-    font-family: 'Lato', sans-serif;
+a {
+    color: #9C27B0;
     text-decoration: none;
-    padding: 12px 24px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-    border-radius: 2px;
-    font-weight: bold;
-    border: none;
-    font-size: 16px;
-    color: rgba(255, 255, 255, 0.87);
 }
 
-.card {
-    background-color: #fff;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-}
-
-.form-control {
-    display: flex;
-    flex-flow: column nowrap;
-    padding-bottom: 12px;
-}
-
-.form-control label{
-    margin-bottom: 4px;
-}
-
-.section-form {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-}
-
-.form {
-    padding: 24px;
-}
-
-.form h2 {
-    margin-top: 0;
-}
-
-.form-control label {
-
-}
-
-.form-control input {
-    width: 100%;
-}
-
-.form-actions {
-    text-align: right;
-    margin-top: 12px;
-}
 
 
 .header {
@@ -190,6 +139,14 @@ img {
     box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
 }
 
+.section-items .item-list .item .item-picture {
+    display: block;
+}
+.section-items .item-list .item .item-title {
+    display: block;
+    color: rgba(0, 0, 0, 0.87);
+}
+
 .section-items .item-list .item img {
     display: block;
     max-height: 200px;
@@ -197,6 +154,21 @@ img {
 
 .section-items .item-list .item h3 {
     margin: 12px;
+}
+
+.section-items .item-list .item small {
+    margin: 12px;
+    display: block;
+}
+
+.article-item {
+
+}
+
+.article-item img {
+    float: right;
+    margin: 24px;
+    max-width: 350px;
 }
 
 
@@ -219,4 +191,104 @@ img {
 
 .nav-list .nav-item a:hover {
     background-color: #CFD8DC;
+}
+
+.flash-message-list {
+    list-style: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    text-align: center;
+    padding: 0;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.flash-message-list .flash-message {
+    margin: 12px auto;
+    padding: 12px 24px;
+    background-color: #263238;
+    color: rgba(255, 255, 255, 0.87);
+    border-radius: 2px;
+}
+
+
+.button {
+    display: inline-block;
+    background-color: #607D8B;
+    font-family: 'Lato', sans-serif;
+    text-decoration: none;
+    padding: 12px 24px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+    border-radius: 2px;
+    font-weight: bold;
+    border: none;
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.87);
+}
+
+.card {
+    background-color: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+}
+
+.form-control {
+    display: flex;
+    flex-flow: column nowrap;
+    padding-bottom: 12px;
+}
+
+.form-control label{
+    margin-bottom: 4px;
+}
+
+.section-form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.form {
+    padding: 24px;
+}
+
+.form h2 {
+    margin-top: 0;
+}
+
+.form img {
+    max-width: 300px;
+}
+
+.form figure {
+    margin: 0;
+    max-width: 300px;
+}
+
+.form figure figcaption {
+    margin: 0;
+    font-size: 12px;
+    word-break: break-all;
+}
+
+.form-control label {
+    display: inline;
+}
+
+.form-control input[type='text'] {
+    display: block;
+    width: 100%;
+}
+
+.form-actions {
+    text-align: right;
+    margin-top: 12px;
+}
+
+.form-delete {
+    display: inline;
 }
