@@ -6,24 +6,35 @@ from utils import slugify, form_has
 from oauth2client.client import FlowExchangeError
 import json, os
 
+# get the upload path relative to the application folder
 dirname = os.path.dirname(os.path.abspath(__file__))
 upload_path = os.path.join(dirname, 'static/pictures')
 
+# setup app and services
 app = Flask(__name__)
 csfr = CSRFProtect()
 auth = Auth()
 uploader = Uploader(upload_path)
 
+
+
 @app.route('/')
 def show_home():
+    """Show the application home page"""
+
     latest_items = Item.latest(10)
 
     return render_template('home.html',latest_items=latest_items)
 
 
-
 @app.route('/items/<string:slug>')
 def show_item_category(slug):
+    """List the items in a category
+
+    Arguments:
+        slug (string) -- The slug of the category to lookup
+    """
+
     category = Category.find_or_fail(slug)
     items = category.items
 
@@ -35,6 +46,8 @@ def show_item_category(slug):
 
 @app.route('/login')
 def show_login():
+    """Show the login page"""
+
     return_to = request.args.get('return_to', url_for('show_home'))
 
     return render_template('login.html',
@@ -44,6 +57,7 @@ def show_login():
 
 @app.route('/logout', methods=['POST'])
 def logout():
+    """Logout the current user"""
     auth.logout()
     return redirect(url_for('show_home'))
 
@@ -51,22 +65,34 @@ def logout():
 @app.route('/oauth/google/callback', methods=['POST'])
 @csfr.requires_token
 def oauth_google_callback():
+    """Callback response function for a Google Oauth2 request"""
     code = request.form['code']
-    # try:
     auth.loginGoogle(code)
-    # except FlowExchangeError:
-        # return json_response('Failed to exchange code for access token', 401)
 
     return json_response('Success!', 200)
 
+
 @app.route('/items/<int:id>', methods=['GET'])
 def show_item(id):
+    """Show the details of an item
+
+    Arguments:
+        id (integer) -- The id of the item
+    """
+
     item = Item.find_or_fail(id)
     return render_template('item_detail.html', item=item)
+
 
 @app.route('/user/<int:id>/items')
 @auth.requires_login
 def show_user_items(id):
+    """Show a list of a user's items
+
+    Arguments:
+        id (integer) -- The user's id
+    """
+
     user = User.find(id)
     user_items = Item.for_user(user.id)
 
@@ -81,6 +107,16 @@ def show_user_items(id):
 @auth.requires_login
 @csfr.requires_token
 def edit_item(id = None):
+    """Edit or create an item
+
+    Keyword Arguments:
+        id (integer) -- The id of the item to edit or
+            None to create a new item (default: {None})
+
+    Raises:
+        UnauthorizedError -- If the user is not the owner of the item
+    """
+
 
     user = auth.user()
 
@@ -156,10 +192,20 @@ def edit_item(id = None):
     g.show_sidebar = False
     return render_template('item_form.html', item=item, action=action)
 
+
 @app.route('/items/<int:id>/delete', methods=['POST'])
 @auth.requires_login
 @csfr.requires_token
 def delete_item(id):
+    """Delete an item
+
+    Arguments:
+        id (iteger) -- The id of the item
+
+    Raises:
+        UnauthorizedError -- If the user is not the owner of the item
+    """
+
     item = Item.find_or_fail(id)
     user = auth.user()
 
@@ -175,12 +221,21 @@ def delete_item(id):
     flash("Item '{}' is gone!")
     return redirect(url_for('show_user_items', id=user.id))
 
+
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+    """Get an uploaded file
+
+    Arguments:
+        filename (string) -- The filename as uploaded
+    """
+
+    return uploader.serve(filename)
 
 @app.context_processor
 def inject_globals():
+    """Inject global vars required by html templates"""
+
     return dict(
         user=auth.user(),
         categories=Category.all(),
@@ -189,12 +244,23 @@ def inject_globals():
 
 @app.before_request
 def reset_globals():
+    """Reset global vars to default state
+
+        Requests may alter these defaults
+    """
+
     g.show_sidebar = True
 
 
 @app.errorhandler(404)
 @app.errorhandler(ModelNotFoundError)
 def handle_error_not_found(error):
+    """Respond to 404-like errors
+
+    Arguments:
+        error (Error) -- The error that occured
+    """
+
     return render_template('error.html',
         error_title='404 Not Found',
         error_message="The resource you are looking for does not exist."
@@ -202,12 +268,29 @@ def handle_error_not_found(error):
 
 @app.errorhandler(CSFRTokenError)
 def handle_error_bad_token(error):
+    """Respond to invalid or missing token errors
+
+    Arguments:
+        error (CSFRTokenError) -- The error that occured
+    """
+
     return render_template('error.html',
         error_title='400 Token Error',
         error_message="Something was missing in that request. Please try again."
     ), 404
 
+
 def json_response(data, status):
+    """Make an http JSON response
+
+    Arguments:
+        data (dict) -- The data to encode
+        status (integer) -- The http reponse status
+
+    Returns:
+        string -- Http response with json body
+    """
+
     response = make_response(json.dumps(data),status)
     response.headers['Content-Type'] = 'application/json'
     return response

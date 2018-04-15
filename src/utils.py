@@ -1,5 +1,8 @@
 import re
 
+"""Some application utility functions"""
+
+
 def slugify(s):
     """
     Simplifies ugly strings into something URL-friendly.
@@ -17,4 +20,15 @@ def slugify(s):
     return s
 
 def form_has(form, key):
+    """Convenience function for checking whether a form
+    request contains a non-empty attribute
+
+    Arguments:
+        form (werkzeug.datastructures.MultiDict) -- The form request dictionary
+        key (string) -- The dictionary key to check
+
+    Returns:
+        boolean -- Whether the attribute exists and is non-empty
+    """
+
     return key in form and form[key].strip()

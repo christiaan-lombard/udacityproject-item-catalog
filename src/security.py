@@ -7,22 +7,30 @@ from oauth2client.client import flow_from_clientsecrets, FlowExchangeError
 
 
 class UnauthorizedError(RuntimeError):
+    """Error signifying an attempt to access a restricted resource"""
     pass
 
 class UnauthenticatedError(RuntimeError):
+    """Error signifying an attempt to access a resource that requires authentication"""
     pass
 
 class Auth:
 
     def __init__(self):
+        """Make an Auth instance"""
+
         self.google_client_secrets = \
             json.loads(open('google_client_secrets.json', 'r').read())
 
-    def redirectUrlGoogle(self):
-        pass
-
 
     def loginGoogle(self, code):
+        """Exchange the given code for a auth_token
+        and login/register the relevant user
+
+        Arguments:
+            code (string) -- The code as supplied by Google Oauth2 callback
+        """
+
         # Upgrade the authorization code into a credentials object
         oauth_flow = flow_from_clientsecrets('google_client_secrets.json', scope='')
         oauth_flow.redirect_uri = 'postmessage'
@@ -49,12 +57,31 @@ class Auth:
 
 
     def login(self, user):
+        """Login a given user
+
+        Arguments:
+            user (models.User) -- The user to login
+        """
+
         session['user_id'] = user.id
 
     def logout(self):
+        """Logout the currently authenticated user"""
         del session['user_id']
 
     def requires_login(self, func):
+        """Decorate a flask route to require a logged in user
+
+        Arguments:
+            func (function) -- The function to decorate
+
+        Raises:
+            UnauthenticatedError -- If there is no user authenticated
+
+        Returns:
+            function -- The decorator
+        """
+
         @wraps(func)
         def check_login(*args, **kwargs):
             user = self.user()
@@ -64,6 +91,12 @@ class Auth:
         return check_login
 
     def user(self):
+        """Get the currently authenticated user
+
+        Returns:
+            models.User -- The currently authenticated user or None
+        """
+
         user_id = session.get('user_id')
         if user_id is None:
             return None
@@ -72,16 +105,36 @@ class Auth:
 
 
 class CSFRTokenError(RuntimeError):
+    """Error signifying the lack of / or invalid CSFR token"""
     pass
 
 class CSRFProtect:
 
     def generate_token(self):
+        """Generate a token or get the current token from the flask session
+
+        Returns:
+            string -- The token to add to form request
+        """
+
         if '_csfr_token_' not in session:
             session['_csfr_token_'] = random_string(64)
         return session['_csfr_token_']
 
     def requires_token(self, func):
+        """Decorate a flask route tocheck for a CSFR token
+        on POST requests
+
+        Arguments:
+            func (function) -- The function to decorate
+
+        Raises:
+            CSFRTokenError -- If the token is not present or invalid
+
+        Returns:
+            function -- The decorator
+        """
+
         @wraps(func)
         def check_token(*args, **kwargs):
             if request.method == 'POST':
@@ -94,4 +147,14 @@ class CSRFProtect:
 
 
 def random_string(lenght = 32):
+    """Generate a random string of
+    uppercase and number characters
+
+    Keyword Arguments:
+        lenght (integer) -- The length of string to generate (default: {32})
+
+    Returns:
+        string -- The random string
+    """
+
     return ''.join(random.choice(string.ascii_uppercase + string.digits) for x in xrange(lenght))
