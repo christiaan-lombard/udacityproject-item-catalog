@@ -19,6 +19,7 @@ def slugify(s):
 
     return s
 
+
 def form_has(form, key):
     """Convenience function for checking whether a form
     request contains a non-empty attribute

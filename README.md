@@ -37,7 +37,7 @@ cd /vagrant
 
 ### Run
 
-To start the web server run `python ./src/app.py`
+To start the web server run `python ./src/app.py`. Access the webserver on [localhost:5000](http://localhost:5000/)
 
 
 
@@ -59,7 +59,7 @@ The Item Catalog project consists of developing an application that provides a l
 ![](https://d17h27t6h515a5.cloudfront.net/topher/2017/August/598e0c98_localhost8080/localhost8080.png)
 
 
-**Selecting a specific category shows you all the items available for that category.** 
+**Selecting a specific category shows you all the items available for that category.**
 *http://localhost:8000/catalog/Snowboarding/items*
 ![](https://d17h27t6h515a5.cloudfront.net/topher/2017/August/598e0d0e_snowboarding/snowboarding.png)
 

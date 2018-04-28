@@ -2,12 +2,17 @@ import os
 from security import random_string
 from flask import url_for, send_from_directory
 
+
+"""Application file upload helpers"""
+__author__ = "Christiaan Lombard <base1.christiaan@gmail.com>"
+
+
 # defines the application's allowed upload extensions
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 
+
 class Uploader:
     """ A service for dealing with uploaded files"""
-
 
     def __init__(self, upload_path):
         """Create a new instance preconfigured with upload folder
@@ -16,7 +21,6 @@ class Uploader:
         """
 
         self.upload_path = upload_path
-
 
     def delete(self, filename):
         """Delete an uploaded file
@@ -29,15 +33,16 @@ class Uploader:
         if os.path.exists(path):
             os.remove(path)
 
-
     def upload(self, file):
         """Save filestream to upload folder
 
         Arguments:
-            file (werkzeug.datastructures.FileStorage) -- Ther filestream to save
+            file (werkzeug.datastructures.FileStorage)
+                -- The filestream to save
 
         Returns:
-            string -- Filename relative to upload folder, for retrieving the file
+            string -- Filename relative to upload folder,
+                        for retrieving the file
         """
 
         ext = get_ext(file.filename)
@@ -45,7 +50,6 @@ class Uploader:
         dest = os.path.join(self.upload_path, filename)
         file.save(dest)
         return filename
-
 
     def serve(self, filename):
         """Serve an uploaded file
@@ -58,7 +62,6 @@ class Uploader:
         """
 
         return send_from_directory(self.upload_path, filename)
-
 
 
 def upload_exists(request, key):
@@ -90,6 +93,7 @@ def validate_file(file):
         return True
     return False
 
+
 def get_ext(filename):
     """Get the extension part of a filename
 
@@ -101,6 +105,7 @@ def get_ext(filename):
     """
 
     return filename.rsplit('.', 1)[1].lower()
+
 
 def allowed_file(filename):
     return '.' in filename and \

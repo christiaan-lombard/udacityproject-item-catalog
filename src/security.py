@@ -1,28 +1,46 @@
 from flask import session, request
 from models import User
 from functools import wraps
-import random, string, json, requests, httplib2, os
 
 from oauth2client.client import flow_from_clientsecrets, FlowExchangeError
 from werkzeug.exceptions import abort
 from werkzeug.exceptions import HTTPException
 
+import random
+import string
+import json
+import requests
+import httplib2
+import os
+
+
+"""Application security helpers"""
+__author__ = "Christiaan Lombard <base1.christiaan@gmail.com>"
+
+
+# get the filepath of google_client_secrets.json
 dirname = os.path.dirname(os.path.abspath(__file__))
+gcs_filepath = os.path.join(dirname, 'google_client_secrets.json')
+
 
 class UnauthenticatedError(HTTPException):
-    """Error signifying an attempt to access a resource that requires authentication"""
+    """Error signifying an attempt to access a
+        resource that requires authentication"""
     code = 401
     description = "Resource requires user authentication"
+
 
 class UnauthorizedError(HTTPException):
     """Error signifying an attempt to access a restricted resource"""
     code = 403
     description = "Access to restricted resource denied"
 
+
 class OAuthFlowError(HTTPException):
     """Generic error for error occuring during OAuth flow"""
     code = 400
     description = "Something went wrong during OAuth flow"
+
 
 class CSFRTokenError(HTTPException):
     """Error signifying the lack of / or invalid CSFR token"""
@@ -35,11 +53,8 @@ class Auth:
     def __init__(self):
         """Make an Auth instance"""
 
-        json_filepath = os.path.join(dirname, 'google_client_secrets.json')
-
         self.google_client_secrets = \
-            json.loads(open(json_filepath, 'r').read())
-
+            json.loads(open(gcs_filepath, 'r').read())
 
     def loginGoogle(self, code):
         """Login/register the relevant user with google oauth code
@@ -49,7 +64,7 @@ class Auth:
         """
 
         # Upgrade the authorization code into a credentials object
-        oauth_flow = flow_from_clientsecrets('google_client_secrets.json', scope='')
+        oauth_flow = flow_from_clientsecrets(gcs_filepath, scope='')
         oauth_flow.redirect_uri = 'postmessage'
         credentials = oauth_flow.step2_exchange(code)
 
@@ -76,7 +91,6 @@ class Auth:
         session['access_token'] = credentials.access_token
         return user
 
-
     def logoutGoogle(self):
         """Logout the currently authenticated user"""
 
@@ -89,12 +103,11 @@ class Auth:
 
         # revoke access token if present
         if access_token:
-            url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % access_token
+            url = 'https://accounts.google.com/' + \
+                    'o/oauth2/revoke?token=%s' % access_token
             response = httplib2.Http().request(url, 'GET')[0]
             if response['status'] != '200':
                 raise OAuthFlowError()
-
-
 
     def requires_login(self, func):
         """Decorate a flask route to require a logged in user
@@ -128,9 +141,6 @@ class Auth:
         if user_id is None:
             return None
         return User.find(user_id)
-
-
-
 
 
 class CSRFProtect:
@@ -171,7 +181,7 @@ class CSRFProtect:
         return check_token
 
 
-def random_string(lenght = 32):
+def random_string(lenght=32):
     """Generate a random string of
     uppercase and number characters
 
@@ -182,4 +192,5 @@ def random_string(lenght = 32):
         string -- The random string
     """
 
-    return ''.join(random.choice(string.ascii_uppercase + string.digits) for x in xrange(lenght))
+    return ''.join(random.choice(string.ascii_uppercase + string.digits)
+                   for x in xrange(lenght))
