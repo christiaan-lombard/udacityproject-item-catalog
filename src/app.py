@@ -1,10 +1,17 @@
-from flask import Flask, jsonify, request, url_for, abort, g, render_template, make_response, redirect, flash, send_from_directory
-from models import Base, User, Item, Category, init_db, ModelNotFoundError
-from security import Auth, CSRFProtect, UnauthorizedError, random_string, CSFRTokenError
+#!/usr/bin/env python
+from flask import (Flask, jsonify, request,
+                    url_for, abort, g, render_template,
+                    make_response, redirect, flash,
+                    send_from_directory)
+from models import (Base, User, Item, Category,
+                    init_db, ModelNotFoundError)
+from security import (Auth, CSRFProtect, UnauthorizedError,
+                    random_string, CSFRTokenError)
 from upload import validate_file, upload_exists, Uploader
 from utils import slugify, form_has
 from oauth2client.client import FlowExchangeError
 import json, os
+from werkzeug.exceptions import HTTPException
 
 # get the upload path relative to the application folder
 dirname = os.path.dirname(os.path.abspath(__file__))
@@ -16,7 +23,9 @@ csfr = CSRFProtect()
 auth = Auth()
 uploader = Uploader(upload_path)
 
-
+#
+# WEB ROUTES
+#
 
 @app.route('/')
 def show_home():
@@ -55,13 +64,6 @@ def show_login():
         return_to=return_to
     )
 
-@app.route('/logout', methods=['POST'])
-def logout():
-    """Logout the current user"""
-    auth.logout()
-    return redirect(url_for('show_home'))
-
-
 @app.route('/oauth/google/callback', methods=['POST'])
 @csfr.requires_token
 def oauth_google_callback():
@@ -70,6 +72,14 @@ def oauth_google_callback():
     auth.loginGoogle(code)
 
     return json_response('Success!', 200)
+
+
+@app.route('/logout', methods=['POST'])
+def logout():
+    """Logout the current user"""
+    auth.logoutGoogle()
+    flash("You have been logged out.")
+    return redirect(url_for('show_home'))
 
 
 @app.route('/items/<int:id>', methods=['GET'])
@@ -85,7 +95,6 @@ def show_item(id):
 
 
 @app.route('/user/<int:id>/items')
-@auth.requires_login
 def show_user_items(id):
     """Show a list of a user's items
 
@@ -213,13 +222,30 @@ def delete_item(id):
         raise UnauthorizedError('Not authorized to delete item.')
 
     t, filename = item.get_picture_info()
+    item_name = item.name
 
     if t == 'UPLOAD':
         uploader.delete(filename)
 
     item.delete()
-    flash("Item '{}' is gone!")
+    flash("Item '{}' is gone!".format(item_name))
     return redirect(url_for('show_user_items', id=user.id))
+
+
+#
+# API ROUTES
+#
+
+
+@app.route('/api/items/<int:id>', methods=['GET'])
+def api_get_item(id):
+    """Get the item info
+
+    Arguments:
+        id (integer) -- The id of the item
+    """
+    item = Item.find_or_fail(id)
+    return json_response(item.serialize, 200)
 
 
 @app.route('/uploads/<filename>')
@@ -232,6 +258,11 @@ def uploaded_file(filename):
 
     return uploader.serve(filename)
 
+
+#
+# FLASK HANDLERS
+#
+
 @app.context_processor
 def inject_globals():
     """Inject global vars required by html templates"""
@@ -241,6 +272,7 @@ def inject_globals():
         categories=Category.all(),
         token=csfr.generate_token()
     )
+
 
 @app.before_request
 def reset_globals():
@@ -252,32 +284,17 @@ def reset_globals():
     g.show_sidebar = True
 
 
-@app.errorhandler(404)
-@app.errorhandler(ModelNotFoundError)
-def handle_error_not_found(error):
-    """Respond to 404-like errors
+@app.errorhandler(HTTPException)
+def catch_http_errors(error):
+    """Respond to errors
 
     Arguments:
-        error (Error) -- The error that occured
+        error (HTTPException) -- The error that occured
     """
-
     return render_template('error.html',
-        error_title='404 Not Found',
-        error_message="The resource you are looking for does not exist."
-    ), 404
-
-@app.errorhandler(CSFRTokenError)
-def handle_error_bad_token(error):
-    """Respond to invalid or missing token errors
-
-    Arguments:
-        error (CSFRTokenError) -- The error that occured
-    """
-
-    return render_template('error.html',
-        error_title='400 Token Error',
-        error_message="Something was missing in that request. Please try again."
-    ), 404
+        error_title=error.code,
+        error_message=error.description
+    ), error.code
 
 
 def json_response(data, status):
@@ -294,8 +311,6 @@ def json_response(data, status):
     response = make_response(json.dumps(data),status)
     response.headers['Content-Type'] = 'application/json'
     return response
-
-
 
 
 if __name__ == '__main__':

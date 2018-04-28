@@ -119,10 +119,8 @@ class Category(Model):
     def serialize(self):
         """Return Category data in serializeable format"""
         return {
-            'name' : self.name,
-            'picture' : self.picture,
-            'price' : self.price,
-            'description' : self.description
+            'slug' : self.slug,
+            'title' : self.title,
         }
 
     @classmethod
@@ -193,10 +191,11 @@ class Item(Model):
     def serialize(self):
         """Return Item data in serializeable format"""
         return {
+            'id' : self.id,
             'name' : self.name,
             'picture' : self.picture,
-            'price' : self.price,
-            'description' : self.description
+            'description' : self.description,
+            'category_slug' : self.category_slug
         }
 
 

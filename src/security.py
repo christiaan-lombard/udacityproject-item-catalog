@@ -1,18 +1,33 @@
 from flask import session, request
 from models import User
 from functools import wraps
-import random, string, json, requests
+import random, string, json, requests, httplib2
 
 from oauth2client.client import flow_from_clientsecrets, FlowExchangeError
+from werkzeug.exceptions import abort
+from werkzeug.exceptions import HTTPException
 
 
-class UnauthorizedError(RuntimeError):
-    """Error signifying an attempt to access a restricted resource"""
-    pass
-
-class UnauthenticatedError(RuntimeError):
+class UnauthenticatedError(HTTPException):
     """Error signifying an attempt to access a resource that requires authentication"""
-    pass
+    code = 401
+    description = "Resource requires user authentication"
+
+class UnauthorizedError(HTTPException):
+    """Error signifying an attempt to access a restricted resource"""
+    code = 403
+    description = "Access to restricted resource denied"
+
+class OAuthFlowError(HTTPException):
+    """Generic error for error occuring during OAuth flow"""
+    code = 400
+    description = "Something went wrong during OAuth flow"
+
+class CSFRTokenError(HTTPException):
+    """Error signifying the lack of / or invalid CSFR token"""
+    code = 400
+    description = "CSFR token missing or invalid"
+
 
 class Auth:
 
@@ -24,8 +39,7 @@ class Auth:
 
 
     def loginGoogle(self, code):
-        """Exchange the given code for a auth_token
-        and login/register the relevant user
+        """Login/register the relevant user with google oauth code
 
         Arguments:
             code (string) -- The code as supplied by Google Oauth2 callback
@@ -53,21 +67,31 @@ class Auth:
             user.set_password(random_string(32))
             user.save()
 
-        self.login(user)
-
-
-    def login(self, user):
-        """Login a given user
-
-        Arguments:
-            user (models.User) -- The user to login
-        """
-
+        # keep login details in session
+        session['auth_type'] = 'google'
         session['user_id'] = user.id
+        session['access_token'] = credentials.access_token
+        return user
 
-    def logout(self):
+
+    def logoutGoogle(self):
         """Logout the currently authenticated user"""
+
+        access_token = session['access_token']
+
+        # clear the session first in case something goes wrong
         del session['user_id']
+        del session['auth_type']
+        del session['access_token']
+
+        # revoke access token if present
+        if access_token:
+            url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % access_token
+            response = httplib2.Http().request(url, 'GET')[0]
+            if response['status'] != '200':
+                raise OAuthFlowError()
+
+
 
     def requires_login(self, func):
         """Decorate a flask route to require a logged in user
@@ -86,7 +110,7 @@ class Auth:
         def check_login(*args, **kwargs):
             user = self.user()
             if user is None:
-                raise UnauthenticatedError("Requires a logged in user.")
+                raise UnauthenticatedError()
             return func(*args, **kwargs)
         return check_login
 
@@ -104,9 +128,7 @@ class Auth:
 
 
 
-class CSFRTokenError(RuntimeError):
-    """Error signifying the lack of / or invalid CSFR token"""
-    pass
+
 
 class CSRFProtect:
 
@@ -141,7 +163,7 @@ class CSRFProtect:
                 session_token = session.pop('_csfr_token_', None)
                 request_token = request.form.get('_csfr_token_')
                 if not session_token or session_token != request_token:
-                    raise CSFRTokenError("CSFR token missing or invalid: %s" % request_token)
+                    raise CSFRTokenError()
             return func(*args, **kwargs)
         return check_token
 

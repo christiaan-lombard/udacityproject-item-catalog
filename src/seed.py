@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 from models import User, Item, Category, init_db
 
 def seed():

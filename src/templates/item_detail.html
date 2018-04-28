@@ -11,6 +11,7 @@
     <p>{{ item.description }}</p>
 
     <p><small>Category: {{ item.category.title }}</small></p>
+    <p><small>Author: <a href="{{ url_for('show_user_items', id=item.user.id) }}">{{ item.user.name }}</a></small></p>
 
     {% if user and user.id == item.user_id %}
     <a href="{{ url_for('edit_item', id=item.id) }}" class="button">Edit</a>
