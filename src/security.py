@@ -1,12 +1,13 @@
 from flask import session, request
 from models import User
 from functools import wraps
-import random, string, json, requests, httplib2
+import random, string, json, requests, httplib2, os
 
 from oauth2client.client import flow_from_clientsecrets, FlowExchangeError
 from werkzeug.exceptions import abort
 from werkzeug.exceptions import HTTPException
 
+dirname = os.path.dirname(os.path.abspath(__file__))
 
 class UnauthenticatedError(HTTPException):
     """Error signifying an attempt to access a resource that requires authentication"""
@@ -34,8 +35,10 @@ class Auth:
     def __init__(self):
         """Make an Auth instance"""
 
+        json_filepath = os.path.join(dirname, 'google_client_secrets.json')
+
         self.google_client_secrets = \
-            json.loads(open('google_client_secrets.json', 'r').read())
+            json.loads(open(json_filepath, 'r').read())
 
 
     def loginGoogle(self, code):

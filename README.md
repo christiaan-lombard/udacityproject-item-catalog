@@ -2,22 +2,45 @@
 
 This is my project submission for the Udacity Fullstack Developer Nanodegree, Backend Module, Item Catalog Project.
 
-TODO: write intro
+This project showcases a item catalog web application supporting CRUD operations, JSON api and Google OAuth.
+
+**Features:**
+ - Add, remove, update, delete items and categories
+ - Third party authentication (Google OAuth)
+ - CSFR Token form protection
+ - JSON API
+
+
 
 ## Install & Run
 
-TODO: write installation and run doc
+### VM
 
-### Test PEP8
+To run the application inside a VM, install [Vagrant]() and run:
 
 ```sh
-pycodestyle TODO
+vagrant up
+vagrant ssh
 ```
 
+In the vm shell go to the synced folder:
 
-## Docs & Resources
+```sh
+cd /vagrant
+```
 
-TODO: add resource links
+### Install
+
+  1. Place a Google OAuth Secrets JSON file in `src/google_client_secrets.json`
+  2. The default file upload path is `src/static/pictures`, ensure this folder can be written to.
+  3. A seeded sqlite DB is provided (`catalog.db`), but can be recreated by running `python src/seed.py`
+
+### Run
+
+To start the web server run `python ./src/app.py`
+
+
+
 
 ## Udacity Project Specifications
 
