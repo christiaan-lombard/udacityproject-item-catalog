@@ -39,6 +39,29 @@ cd /vagrant
 
 To start the web server run `python ./src/app.py`. Access the webserver on [localhost:5000](http://localhost:5000/)
 
+## Screenshots
+
+*Home [localhost:5000](http://localhost:5000/)*
+![](screenshots/home.png)
+
+*Login [localhost:5000/login](http://localhost:5000/login)*
+![](screenshots/login.png)
+
+*Add Item [localhost:5000/items/add](http://localhost:5000/items/add)*
+![](screenshots/item_add.png)
+
+*Item Detail [localhost:5000/items/13](http://localhost:5000/items/13)*
+![](screenshots/item_detail.png)
+
+*User Items [localhost:5000/user/1/items](http://localhost:5000/user/1/items)*
+
+*Item Category [localhost:5000/items/brauny](http://localhost:5000/items/brauny)*
+![](screenshots/item_category.png)
+
+*API Item Detail [localhost:5000/api/items/1](localhost:5000/api/items/1)*
+```js
+{"picture": "LINK:http://78.media.tumblr.com/tumblr_llz72e9zcQ1qjahcpo1_400.jpg", "description": "\n            Be interview ready with a fancy tie.\n            Lorem ipsum dolor amet snackwave craft beer echo park pitchfork, YOLO microdosing health goth iPhone.\n        ", "category_slug": "fancy", "id": 1, "name": "Starry Eyed Tie"}
+```
 
 
 
