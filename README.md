@@ -37,7 +37,7 @@ cd /vagrant
 
 ### Run
 
-To start the web server run `python ./src/app.py`. Access the webserver on [localhost:5000](http://localhost:5000/)
+To start the web server run `python ./src/catalog.py`. Access the webserver on [localhost:5000](http://localhost:5000/)
 
 ## Screenshots
 
