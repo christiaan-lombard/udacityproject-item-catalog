@@ -319,7 +319,7 @@ def json_response(data, status):
 
 
 if __name__ == '__main__':
-    init_db()
+    init_db('sqlite:///catalog.db', True)
     app.config['UPLOAD_FOLDER'] = upload_path
     app.config['MAX_CONTENT_LENGTH'] = 4 * 1024 * 1024
     app.secret_key = 'super_secret_key'

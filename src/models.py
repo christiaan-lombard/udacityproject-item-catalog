@@ -221,11 +221,11 @@ class Item(Model):
             'category_slug': self.category_slug}
 
 
-def init_db():
+def init_db(connection, echo):
     """Initialize the database and session"""
 
     # create the database tables as defined
-    engine = create_engine('sqlite:///catalog.db', echo=True)
+    engine = create_engine(connection, echo=echo)
     Base.metadata.create_all(engine)
 
     # create a session
@@ -240,4 +240,4 @@ def init_db():
 
 
 if __name__ == '__main__':
-    init_db()
+    init_db('sqlite:///catalog.db', True)
