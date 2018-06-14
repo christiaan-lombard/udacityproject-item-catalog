@@ -23,10 +23,10 @@ __author__ = "Christiaan Lombard <base1.christiaan@gmail.com>"
 # get the upload path relative to the application folder
 dirname = os.path.dirname(os.path.abspath(__file__))
 upload_path = os.path.join(dirname, 'static/pictures')
-app.config['UPLOAD_FOLDER'] = upload_path
 
 # setup app and services
 app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = upload_path
 csfr = CSRFProtect()
 auth = Auth()
 uploader = Uploader(upload_path)
